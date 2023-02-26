@@ -1,0 +1,119 @@
+--------------------------------------------------------------------------------------------------------------------------------
+
+TypeScript is a programming language developed and maintained by Microsoft. It is a strict syntactical superset of JavaScript and adds optional static typing to the language. TypeScript is designed for the development of large applications and transcompiles to JavaScript.[5] As TypeScript is a superset of JavaScript, existing JavaScript programs are also valid TypeScript programs.
+
+To install typescript, we do npm install typescript. 
+
+Typescript is used only in development time. It does not run on browser. It is ONLY for developers in large projects so that code and intent is easier to read and understand. Typescript needs to be compiled before it is converted to JS and be run on browsers. To compile TS, we use 'npx tsc'
+
+we can also use below since TS is only used in dev environment
+npm install typescript --save-dev
+
+running npx tsc as is requires a config file in the project folder. To compile a specific file, we can do 'npx tsc filename.ts'
+
+upon compiling the TS files, even if it has errors or does not, it will still output a javascript file, which is what we will use in our html stuff.however, i tried using .ts files directly, and it still seemed to work fine. 
+
+the TS config file is tsconfig.json
+
+once the TS file is compiled, we can run it as 'node typescript-hello-world-errors' without specifying any extensions.
+if we do : 'node tyepscript-hello-world-errors.ts' - it will give a bunch of errors as it doesnt know ts
+we can however do 'node typescript-hello-world-errors.js' without any issues.
+
+we can tell TS to run compiler in watch mode using:
+npx tsc filename.ts -w (or --watch)
+
+this will cause TS to keep compiling till we quit using ctrl-c and any changes will automatically compile
+
+tsc --init --> will create the tsconfig.json file with compilation files as all the files in the project. 
+
+so doing tsc --init, followed by tsc -w 
+will ensure that any changes to ts files in the whole project will automatically be compiled
+
+--------------------------------------------------------------------------------------------------------------------------------
+after setting up the tsconfig.json file, i am able to just do 'npx tsc' to compile code. in the json file, since i have mapSource as true,
+it will also emit a .map file. .map files are source map files that let tools map between the emitted JavaScript code and the TypeScript source files that created it. 
+Many debuggers (e.g. Visual Studio or Chrome's dev tools) can consume these files so you can debug the TypeScript file instead of the JavaScript file.
+
+we can also have the tsconfig.json be generated automatically using 'npx tsc --init'
+
+--------------------------------------------------------------------------------------------------------------------------------
+to debug ts we can use vscode's chrome for ts plugin with which we can debug ts code.
+
+ts can not only compile ts files to js, it can also use the latest ts features and compile them into older browsers if we need to 
+we can do these settings in tsconfig.json
+
+--------------------------------------------------------------------------------------------------------------------------------
+Webpack is a tool that lets you compile JavaScript modules, also known as module bundler. Given a large number of files, it generates a single file
+(or a few files) that run your app. It can perform many operations: helps you bundle your resources.
+Webpack is an open-source JavaScript module bundler. It is made primarily for JavaScript, but it can transform front-end assets such as HTML, CSS, 
+and images if the corresponding loaders are included. webpack takes modules with dependencies and generates static assets representing those modules.
+
+once we have webpack installed, we will have a file called webpack.config.js with contents like below:
+
+const path = require('path');
+
+module.exports = {
+  mode: 'development',
+  entry: './src/app.ts',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: 'dist'   //this will help us to load changes dynamically in development environment so that changes get picked up immediately
+  },
+  devtool: 'inline-source-map', //thsi will help us to debug on browser similar to sourcemaps in tsconfig.json file
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        //use: 'ts-loader', //or
+        use: {
+          loader: 'babel-loader' //for using babel
+          options: {
+            presets: ['env']
+          }
+        }
+        exclude: /node_modules/,
+        
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.ts', '.js']
+  }
+};
+
+we can then have a build key in the package.json file to point to webpack under the scripts section.
+then running 'npm run build' will create bundle.js with all the compressed code
+--------------------------------------------------------------------------------------------------------------------------------
+for prod, we typically use a different file for webpack:
+
+const path = require('path');
+const CleanPlugin = require('clean-webpack-plugin'); //we use clean plugin which is separately installed. 
+
+module.exports = {
+  mode: 'production',
+  entry: './src/app.ts',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  devtool: 'none', //no need for debug source maps etc
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.ts', '.js']
+  },
+  plugins: [
+    new CleanPlugin.CleanWebpackPlugin()
+  ]
+};
+--------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------

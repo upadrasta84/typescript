@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"module": "amd",
+		// "target": "es6", // sudo typings install dt~es6-promise dt~es6-collections --global --save 
+
+//--save-dev is used to save the package for development purpose. Example: unit tests, minification..
+//--save is used to save the package required for the application to run.
+		
+		"target": "ES5", //not specifying anything will take default as es3
+		"experimentalDecorators": true, //required for decorators to work
+		"emitDecoratorMetadata" : true
+		//"sourceMap": true //setting this will emit sourcemap files which is a mapping between js and ts files for use by the browser. browser can then directly debug ts files and makes it easier for us
+	},
+	"files": [
+//		"00-typescript-hello-world-errors.ts",
+		"03-ts-decorators.ts"
+	], 
+	"exclude": ["node_modules"], //by default, node_modules is anyway excluded
+	"include": ["file.ts"] //this will cause only file.ts to be compiled when we run tsc
+	//difference between "files" and "include" is that with include, we can also add folders but with files it can only be individual files
+}
